@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import "@/styles/auth-form.css";
 
 export default function AuthForm() {
   const [formData, setFormData] = useState({
@@ -44,7 +45,13 @@ export default function AuthForm() {
     setLoading(true);
 
     try {
-      const response = await fetch("/api/auth", {
+      const apiPath =
+        window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1"
+          ? "/api/auth"
+          : "/auth-form/api/auth";
+
+      const response = await fetch(apiPath, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
