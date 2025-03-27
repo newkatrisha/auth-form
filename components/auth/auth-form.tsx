@@ -45,31 +45,41 @@ export default function AuthForm() {
     setLoading(true);
 
     try {
-      const apiPath =
-        window.location.hostname === "localhost" ||
-        window.location.hostname === "127.0.0.1"
-          ? "/api/auth"
-          : "/auth-form/api/auth";
+      const isGitHubPages = window.location.hostname.includes("github.io");
+      let userData;
 
-      const response = await fetch(apiPath, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+      if (isGitHubPages) {
+        await new Promise((resolve) => setTimeout(resolve, 800));
+
+        userData = {
+          name: formData.email.split("@")[0],
           email: formData.email,
-          password: formData.password,
-          isLogin: formData.isLogin,
-        }),
-      });
+        };
+      } else {
+        const apiPath = "/api/auth";
 
-      const data = await response.json();
+        const response = await fetch(apiPath, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.password,
+            isLogin: formData.isLogin,
+          }),
+        });
 
-      if (!response.ok) {
-        throw new Error(data.error || "An error occurred");
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "An error occurred");
+        }
+
+        userData = data.user;
       }
 
-      setUserData(data.user);
+      setUserData(userData);
       setSuccess(true);
     } catch (err) {
       setError(
