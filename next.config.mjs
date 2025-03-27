@@ -19,6 +19,10 @@ const nextConfig = {
   experimental: {
     webpackBuildWorker: true,
   },
+  // GitHub Pages settings
+  output: "export",
+  basePath: "/auth-form",
+  assetPrefix: "/auth-form/",
 };
 
 mergeConfig(nextConfig, userConfig);

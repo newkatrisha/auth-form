@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import "@/styles/auth-form.css";
 
 export default function AuthForm() {
   const [formData, setFormData] = useState({
