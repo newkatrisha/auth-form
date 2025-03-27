@@ -30,6 +30,12 @@ export default function AuthForm() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
+
+    // Clear error when user types
+    if (error) {
+      setError(null);
+    }
+
     setFormData((prev) => ({
       ...prev,
       [id]: value,

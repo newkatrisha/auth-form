@@ -4,7 +4,7 @@ A simple, responsive authentication form built with Next.js and TypeScript that 
 
 ## Features
 
-- Clean, modern UI for login and signup
+- UI for login and signup
 - Form validation for email and password
 - Simulated API authentication flow
 - Error and success state handling

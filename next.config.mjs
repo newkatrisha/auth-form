@@ -5,6 +5,8 @@ try {
   // ignore error
 }
 
+const isProduction = process.env.NODE_ENV === "production";
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   eslint: {
@@ -19,10 +21,14 @@ const nextConfig = {
   experimental: {
     webpackBuildWorker: true,
   },
-  // GitHub Pages settings
-  output: "export",
-  basePath: "/auth-form",
-  assetPrefix: "/auth-form/",
+  // Only apply GitHub Pages settings in production
+  ...(isProduction
+    ? {
+        output: "export",
+        basePath: "/auth-form",
+        assetPrefix: "/auth-form/",
+      }
+    : {}),
 };
 
 mergeConfig(nextConfig, userConfig);
