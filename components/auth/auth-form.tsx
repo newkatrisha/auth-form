@@ -4,26 +4,36 @@ import React, { useState } from "react";
 import "@/styles/auth-form.css";
 
 export default function AuthForm() {
-  const [isLogin, setIsLogin] = useState(true);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    isLogin: true,
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [userData, setUserData] = useState<any>(null);
 
   const validateForm = () => {
-    if (!email || !email.includes("@")) {
+    if (!formData.email || !formData.email.includes("@")) {
       setError("Please enter a valid email address");
       return false;
     }
 
-    if (!password || password.length < 6) {
+    if (!formData.password || formData.password.length < 6) {
       setError("Password must be at least 6 characters");
       return false;
     }
 
     return true;
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [id]: value,
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -41,9 +51,9 @@ export default function AuthForm() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          email,
-          password,
-          isLogin,
+          email: formData.email,
+          password: formData.password,
+          isLogin: formData.isLogin,
         }),
       });
 
@@ -65,7 +75,10 @@ export default function AuthForm() {
   };
 
   const toggleAuthMode = () => {
-    setIsLogin(!isLogin);
+    setFormData((prev) => ({
+      ...prev,
+      isLogin: !prev.isLogin,
+    }));
     setError(null);
     setSuccess(false);
   };
@@ -75,18 +88,21 @@ export default function AuthForm() {
       <div className="auth-container">
         <div className="auth-form success-message">
           <div className="success-icon">✓</div>
-          <h2>{isLogin ? "Login Successful!" : "Account Created!"}</h2>
-          {isLogin ? <p>Welcome back, {userData.name}</p> : null}
+          <h2>{formData.isLogin ? "Login Successful!" : "Account Created!"}</h2>
+          {formData.isLogin ? <p>Welcome back, {userData.name}</p> : null}
           <button
             className="auth-button"
             onClick={() => {
               setSuccess(false);
               setUserData(null);
-              setEmail("");
-              setPassword("");
+              setFormData({
+                email: "",
+                password: "",
+                isLogin: formData.isLogin,
+              });
             }}
           >
-            Back to {isLogin ? "Login" : "Sign Up"}
+            Back to {formData.isLogin ? "Login" : "Sign Up"}
           </button>
         </div>
       </div>
@@ -96,9 +112,9 @@ export default function AuthForm() {
   return (
     <div className="auth-container">
       <div className="auth-form">
-        <h1>{isLogin ? "Welcome Back" : "Create Account"}</h1>
+        <h1>{formData.isLogin ? "Welcome Back" : "Create Account"}</h1>
         <p className="auth-subtitle">
-          {isLogin
+          {formData.isLogin
             ? "Enter your credentials to access your account"
             : "Fill in the form below to create your account"}
         </p>
@@ -110,10 +126,8 @@ export default function AuthForm() {
               <input
                 id="email"
                 type="email"
-                value={email}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setEmail(e.target.value)
-                }
+                value={formData.email}
+                onChange={handleChange}
                 placeholder="your@email.com"
                 disabled={loading}
                 required
@@ -127,10 +141,8 @@ export default function AuthForm() {
               <input
                 id="password"
                 type="password"
-                value={password}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setPassword(e.target.value)
-                }
+                value={formData.password}
+                onChange={handleChange}
                 placeholder="••••••••"
                 disabled={loading}
                 required
@@ -143,7 +155,7 @@ export default function AuthForm() {
           <button type="submit" className="auth-button" disabled={loading}>
             {loading ? (
               <span className="loading-spinner"></span>
-            ) : isLogin ? (
+            ) : formData.isLogin ? (
               "Log In"
             ) : (
               "Sign Up"
@@ -153,14 +165,16 @@ export default function AuthForm() {
 
         <div className="auth-switch">
           <p>
-            {isLogin ? "Don't have an account?" : "Already have an account?"}
+            {formData.isLogin
+              ? "Don't have an account?"
+              : "Already have an account?"}
             <button
               type="button"
               className="switch-button"
               onClick={toggleAuthMode}
               disabled={loading}
             >
-              {isLogin ? "Sign Up" : "Log In"}
+              {formData.isLogin ? "Sign Up" : "Log In"}
             </button>
           </p>
         </div>
